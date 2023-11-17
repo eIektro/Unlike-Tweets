@@ -7,9 +7,20 @@
 # Please see README.md for more information
 ##
 
+##
+#  Unlike-Tweets-X -- delete all your favorites w/o API access
+#  Copyright 2023 Metin Emre Koral
+#  Forked and developed from devio's de-x script: (https://github.com/devio/de-x)
+#
+# Please see README.md for more information
+##
+
+
 import sys
 import json
 import requests
+import random
+import time
 
 def get_tweet_ids(json_data):
 
@@ -17,7 +28,7 @@ def get_tweet_ids(json_data):
     data = json.loads(json_data)
 
     for d in data:
-        result.append(d['tweet']['id_str'])
+        result.append(d['like']['tweetId'])
 
     return result
 
@@ -58,14 +69,17 @@ def main(ac, av):
 
     for i in ids:
         delete_tweet(session, i)
-        # maybe add some random sleep here to prevent future rate-limiting
+        # as a chrishenninger's comment in another alike project; X's UnfavoriteTweet endpoint has rate limiting: ~500 tweets in a ~15 minutes https://gist.github.com/aymericbeaumet/d1d6799a1b765c3c8bc0b675b1a1547d?permalink_comment_id=4694790#gistcomment-4694790 
+
+        sleep_time = random.uniform(1, 5)
+        time.sleep(sleep_time)
 
 
 def delete_tweet(session, tweet_id):
 
     print(f"[*] delete tweet-id {tweet_id}")
-    delete_url = "https://twitter.com/i/api/graphql/VaenaVgh5q5ih7kvyVjgtg/DeleteTweet"
-    data = {"variables":{"tweet_id":tweet_id,"dark_request":False},"queryId":"VaenaVgh5q5ih7kvyVjgtg"}
+    delete_url = "https://twitter.com/i/api/graphql/ZYKSe-w7KEslx3JhSIk5LA/UnfavoriteTweet"
+    data = {"variables":{"tweet_id":tweet_id,"dark_request":False},"queryId":"ZYKSe-w7KEslx3JhSIk5LA"}
 
     # set or re-set correct content-type header
     session["content-type"] = 'application/json'
